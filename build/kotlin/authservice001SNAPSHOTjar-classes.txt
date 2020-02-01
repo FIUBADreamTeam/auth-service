@@ -1,0 +1,1 @@
+/home/jorge.cabrera/Documentos/Facultad/auth-service/build/classes/kotlin/main/com/fdt/authservice/AuthServiceApplication.class:/home/jorge.cabrera/Documentos/Facultad/auth-service/build/classes/kotlin/main/com/fdt/authservice/AuthServiceApplicationKt.class

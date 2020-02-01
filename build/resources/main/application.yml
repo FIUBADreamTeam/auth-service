@@ -1,0 +1,22 @@
+
+spring:
+  application:
+    name: auth-service
+    jackson:
+      property-naming-strategy: SNAKE_CASE
+  redis:
+    master-url: redis
+    master-port: 6379
+    version-prefix: validation
+    ttl: 60
+  cache:
+    type: redis
+  datasource:
+    url: jdbc:mysql://db:3306/authdb?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=false
+    username: user
+    password: admin
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        ddl-auto: update
