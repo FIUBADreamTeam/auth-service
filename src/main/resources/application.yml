@@ -2,13 +2,13 @@
 spring:
   application:
     name: auth-service
-    jackson:
+  jackson:
       property-naming-strategy: SNAKE_CASE
   redis:
     master-url: redis
     master-port: 6379
     version-prefix: validation
-    ttl: 60
+    ttl: 180
   cache:
     type: redis
   datasource:

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class CredentialRepositoryImpl : CredentialRepository {
+class CredentialMySqlRepository : CredentialRepository {
 
     @Autowired
     private lateinit var relationalCredentialRepository: CredentialCrudRepository
