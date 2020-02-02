@@ -10,6 +10,6 @@ class TokenService(private val tokenRepository: TokenRepository) {
     fun create(userId: Long): Token {
         //TODO ver como generar el hash del token
         val token = Token(token = "asd", userId = userId)
-        return tokenRepository.create(token)
+        return tokenRepository.save(token)
     }
 }
