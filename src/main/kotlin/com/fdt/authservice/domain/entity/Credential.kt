@@ -16,4 +16,6 @@ data class Credential(
         val email: String,
         val phone: String,
         var password: String
-)
+){
+        fun checkPassword(pwd:String) = this.password==pwd
+}

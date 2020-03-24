@@ -29,6 +29,7 @@ internal class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 				.addFilterAfter(JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter::class.java)
 				.authorizeRequests()
 				.antMatchers(HttpMethod.POST, "/auth/register").permitAll()
+				.antMatchers(HttpMethod.POST, "/auth/login").permitAll()
 				.anyRequest().authenticated()
 	}
 }

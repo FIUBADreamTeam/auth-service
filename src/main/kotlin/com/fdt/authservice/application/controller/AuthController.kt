@@ -1,6 +1,7 @@
 package com.fdt.authservice.application.controller
 
 import com.fdt.authservice.domain.entity.Credential
+import com.fdt.authservice.domain.entity.LoginCredential
 import com.fdt.authservice.domain.entity.Token
 import com.fdt.authservice.domain.service.AuthService
 
@@ -24,6 +25,11 @@ class AuthController(private val authService: AuthService) {
         return ResponseEntity
                 .status(CREATED)
                 .body(token)
+    }
+
+    @PostMapping(path = ["/login"])
+    fun login(@RequestBody loginCredential: LoginCredential): Token {
+        return authService.findUser(loginCredential)
     }
 
     @GetMapping("/ping")

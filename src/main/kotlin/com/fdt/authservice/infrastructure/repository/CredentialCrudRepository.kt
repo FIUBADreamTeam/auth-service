@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface CredentialCrudRepository : CrudRepository<Credential, Long> {
+
+    fun findByEmailOrPhone(email: String?, phone: String?): Credential?
+
 }

@@ -6,4 +6,6 @@ interface CredentialRepository {
     fun save(credential: Credential): Credential
 
     fun deleteAll()
+
+    fun findByEmailOrPhone(email:String, phone:String): Credential?
 }

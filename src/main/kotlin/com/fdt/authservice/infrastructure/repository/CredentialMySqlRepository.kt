@@ -1,6 +1,7 @@
 package com.fdt.authservice.infrastructure.repository
 
 import com.fdt.authservice.domain.entity.Credential
+import com.fdt.authservice.domain.entity.LoginCredential
 import com.fdt.authservice.domain.repository.CredentialRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -17,6 +18,10 @@ class CredentialMySqlRepository : CredentialRepository {
 
     override fun deleteAll() {
         relationalCredentialRepository.deleteAll()
+    }
+
+    override fun findByEmailOrPhone(email:String, phone:String): Credential?{
+        return relationalCredentialRepository.findByEmailOrPhone(email, phone)
     }
 
 }

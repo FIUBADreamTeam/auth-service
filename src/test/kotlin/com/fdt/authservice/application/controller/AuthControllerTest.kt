@@ -96,4 +96,40 @@ class AuthControllerTest {
                 .andExpect(status().isForbidden)
     }
 
+    @Test
+    fun `when i try to do a valid login with registered user should return a token`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                        .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
+                        .contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "email":"foo@bar.com", "phone":"","password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("token").exists())
+                .andExpect(jsonPath("user_id").value(1))
+    }
+
+    @Test
+    fun `when i try to do a invalid login (pwd) with registered user should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(post("/${AuthController.path}/login")
+                        .content("""{ "email":"foo@bar.com", "phone":"","password":"no mi pwd" }""")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `when i try to do a invalid login with unregistered user should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/login")
+                        .content("""{ "email":"foo@bar.com", "phone":"","password":"pwd" }""")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized)
+    }
+
+
+
 }
