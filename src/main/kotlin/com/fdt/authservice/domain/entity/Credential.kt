@@ -12,8 +12,8 @@ import javax.persistence.Table
 data class Credential(
         @Id @GeneratedValue(strategy = IDENTITY)
         val id: Long,
-        @Column(nullable = false)
         val userId: Long,
-        @Column(nullable = false)
-        var password: String) {
-}
+        val email: String,
+        val phone: String,
+        var password: String
+)

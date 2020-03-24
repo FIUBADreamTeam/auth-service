@@ -5,7 +5,10 @@ import com.fdt.authservice.domain.entity.Token
 import org.springframework.stereotype.Service
 
 @Service
-class AuthService(private val credentialService: CredentialService, private val tokenService: TokenService) {
+class AuthService(
+        private val credentialService: CredentialService,
+        private val tokenService: TokenService
+) {
 
     //TODO este metodo debería tener transactionl
     fun register(credential: Credential): Token {

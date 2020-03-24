@@ -15,4 +15,8 @@ class CredentialMySqlRepository : CredentialRepository {
         return relationalCredentialRepository.save(credential)
     }
 
+    override fun deleteAll() {
+        relationalCredentialRepository.deleteAll()
+    }
+
 }
