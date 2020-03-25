@@ -1,3 +1,3 @@
 package com.fdt.authservice.domain.exception
 
-class InvalidUser: RuntimeException()
+class InvalidUser(msg: String): RuntimeException(msg)

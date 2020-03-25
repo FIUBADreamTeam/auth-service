@@ -120,6 +120,7 @@ class AuthControllerTest {
                         .content("""{ "email":"foo@bar.com", "phone":"","password":"no mi pwd" }""")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized)
+                .andExpect(jsonPath("message").value("Invalid Password for User"))
     }
 
     @Test
@@ -128,6 +129,29 @@ class AuthControllerTest {
                         .content("""{ "email":"foo@bar.com", "phone":"","password":"pwd" }""")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized)
+                .andExpect(jsonPath("message").value("User not exist"))
+    }
+
+    @Test
+    fun `when i try to do a invalid login (mail+phone) with registered user should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(post("/${AuthController.path}/login")
+                        .content("""{ "email":"foo@bar.com", "phone":"123","password":"pwd" }""")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("Mail and Phone shouldn't be filled at the same time"))
+    }
+
+    @Test
+    fun `when i try to do a invalid login (mail+phone) with unregistered user should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/login")
+                        .content("""{ "email":"foo@bar.com", "phone":"123","password":"pwd" }""")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("Mail and Phone shouldn't be filled at the same time"))
     }
 
 
