@@ -37,5 +37,9 @@ class AuthService(
         if (!loginCredential.phone.isNullOrEmpty() && !loginCredential.email.isNullOrEmpty()){
             throw InvalidLoginCredential("Mail and Phone shouldn't be filled at the same time")
         }
+        if (loginCredential.phone.isNullOrEmpty() && loginCredential.email.isNullOrEmpty()){
+            throw InvalidLoginCredential("Mail and Phone shouldn't be empty at the same time")
+        }
+
     }
 }

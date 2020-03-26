@@ -154,6 +154,15 @@ class AuthControllerTest {
                 .andExpect(jsonPath("message").value("Mail and Phone shouldn't be filled at the same time"))
     }
 
+    @Test
+    fun `when i try to do a invalid login (not mail + not phone) with unregistered user should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "email":"", "phone":"","password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("Mail and Phone shouldn't be empty at the same time"))
+    }
+
 
 
 }
