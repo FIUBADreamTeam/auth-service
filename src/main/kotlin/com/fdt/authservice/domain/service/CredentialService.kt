@@ -15,4 +15,8 @@ class CredentialService(private var credentialRepository: CredentialRepository) 
     fun findUser(loginCredential: LoginCredential): Credential? {
         return credentialRepository.findByEmailOrPhone(loginCredential.email, loginCredential.phone)
     }
+
+    fun existsUser(credential: Credential): Boolean{
+        return credentialRepository.existsByEmailOrPhone(credential.email, credential.phone)
+    }
 }

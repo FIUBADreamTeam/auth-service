@@ -16,8 +16,16 @@ class AuthService(
 
     //TODO este metodo debería tener transactionl
     fun register(credential: Credential): Token {
+        // en vez de create no deberia ser CREATE_IF_NOT_FOUND ya que Mail o phone no deben estar registrados
+        validRegistrationCredential(credential)
         val credentialSaved = credentialService.create(credential)
         return tokenService.create(credentialSaved.userId)
+    }
+
+    fun validRegistrationCredential(credential: Credential) {
+        if (credentialService.existsUser(credential)){
+            throw InvalidUser("Mail or Phone already taken")
+        }
     }
 
     fun findUser(loginCredential: LoginCredential): Token {

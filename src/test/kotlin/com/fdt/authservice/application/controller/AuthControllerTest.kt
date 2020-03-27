@@ -163,6 +163,35 @@ class AuthControllerTest {
                 .andExpect(jsonPath("message").value("Mail and Phone shouldn't be empty at the same time"))
     }
 
+    // TODO Registrar con mail registrado deberia dar error
+    // Porque le pasamos un userID si no lo sabemos.. quien lo genera?
+    @Test
+    fun `when i try to register user with mail already taken should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":2, "email":"foo@bar.com", "phone":"456", "password":"pswdr" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized)
+                .andExpect(jsonPath("message").value("Mail or Phone already taken"))
+    }
+
+    // TODO Registrar con telefono registrado deberia dar error
+    // Porque le pasamos un userID si no lo sabemos.. quien lo genera?
+    @Test
+    fun `when i try to register user with phone already taken should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":1, "email":"football@bar.com", "phone":"456", "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":2, "email":"foo@bar.com", "phone":"456", "password":"pswdr" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized)
+                .andExpect(jsonPath("message").value("Mail or Phone already taken"))
+    }
 
 
 }

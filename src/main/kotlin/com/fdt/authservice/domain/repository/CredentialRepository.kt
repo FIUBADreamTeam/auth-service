@@ -8,4 +8,6 @@ interface CredentialRepository {
     fun deleteAll()
 
     fun findByEmailOrPhone(email:String, phone:String): Credential?
+
+    fun existsByEmailOrPhone(email:String, phone:String): Boolean
 }
