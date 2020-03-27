@@ -97,7 +97,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to do a valid login with registered user should return a token`() {
+    fun `when try to login with registered user should return a token`() {
         mockMvc.perform(post("/${AuthController.path}/register")
                         .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -111,7 +111,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to do a invalid login (pwd) with registered user should return error`() {
+    fun `when try to login with a password that not match should return unauthorized`() {
         mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -124,7 +124,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to do a invalid login with unregistered user should return error`() {
+    fun `when try to login with an unregistered user should return unauthorized`() {
         mockMvc.perform(post("/${AuthController.path}/login")
                         .content("""{ "email":"foo@bar.com", "phone":"","password":"pwd" }""")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -133,7 +133,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to do a invalid login (mail+phone) with registered user should return error`() {
+    fun `when try to login with email and phone at the same time should return bad request`() {
         mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -146,7 +146,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to do a invalid login (mail+phone) with unregistered user should return error`() {
+    fun `when try to login with email and phone not registered at the same time should return bad request`() {
         mockMvc.perform(post("/${AuthController.path}/login")
                         .content("""{ "email":"foo@bar.com", "phone":"123","password":"pwd" }""")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -155,7 +155,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to do a invalid login (not mail + not phone) with unregistered user should return error`() {
+    fun `when try to login without email and phone should return bad request`() {
         mockMvc.perform(post("/${AuthController.path}/login")
                 .content("""{ "email":"", "phone":"","password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))

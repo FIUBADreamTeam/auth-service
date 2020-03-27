@@ -1,7 +1,6 @@
 package com.fdt.authservice.domain.service
 
 import com.fdt.authservice.domain.entity.Credential
-import com.fdt.authservice.domain.entity.LoginCredential
 import com.fdt.authservice.domain.repository.CredentialRepository
 import org.springframework.stereotype.Service
 
@@ -12,7 +11,7 @@ class CredentialService(private var credentialRepository: CredentialRepository) 
         return credentialRepository.save(credential)
     }
 
-    fun findUser(loginCredential: LoginCredential): Credential? {
-        return credentialRepository.findByEmailOrPhone(loginCredential.email, loginCredential.phone)
+    fun findByEmailOrPhone(email:String, phone:String): Credential? {
+        return credentialRepository.findByEmailOrPhone(email, phone)
     }
 }

@@ -29,7 +29,7 @@ class AuthController(private val authService: AuthService) {
 
     @PostMapping(path = ["/login"])
     fun login(@RequestBody loginCredential: LoginCredential): Token {
-        return authService.findUser(loginCredential)
+        return authService.login(loginCredential)
     }
 
     @GetMapping("/ping")

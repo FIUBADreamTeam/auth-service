@@ -20,20 +20,16 @@ class AuthService(
         return tokenService.create(credentialSaved.userId)
     }
 
-    fun findUser(loginCredential: LoginCredential): Token {
+    fun login(loginCredential: LoginCredential): Token {
         validLoginCredential(loginCredential)
-        val user = credentialService.findUser(loginCredential)
-        user?.let {
-            if (it.checkPassword(loginCredential.password)) {
-                return tokenService.create(it.userId)
-            } else {
-                throw InvalidPassword("Invalid Password for User")
-            }
+        val credential = credentialService.findByEmailOrPhone(loginCredential.email, loginCredential.phone)
+        credential?.let {
+            return if (it.checkPassword(loginCredential.password)) tokenService.create(it.userId)
+            else throw InvalidPassword("Invalid Password for User")
         } ?: throw InvalidUser("User not exist")
     }
 
     fun validLoginCredential(loginCredential: LoginCredential) {
-        // Debe tener nombre o mail pero no los dos y un pwd.
         if (!loginCredential.phone.isNullOrEmpty() && !loginCredential.email.isNullOrEmpty()){
             throw InvalidLoginCredential("Mail and Phone shouldn't be filled at the same time")
         }
