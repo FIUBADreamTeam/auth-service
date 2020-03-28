@@ -84,8 +84,9 @@ class AuthServiceTest {
 
     @Test
     fun `a successful login should return a valid token`() {
-        val credential = givenAnyRegisteredCredential()
-        val loginCredential = toLoginCredential(credential)
+        val pwd = "pwd"
+        val credential = givenAnyRegisteredCredential(pwd)
+        val loginCredential = toLoginCredential(credential.copy(password = pwd))
 
         val token = tested.login(loginCredential)
 
@@ -96,11 +97,11 @@ class AuthServiceTest {
     }
 
 
-    private fun givenAnyCredential() =
-            Credential(0L, 1L, "foo@bar.com", "123", "pwd")
+    private fun givenAnyCredential(pwd: String = "pwd") =
+            Credential(0L, 1L, "foo@bar.com", "123", pwd)
 
-    private fun givenAnyRegisteredCredential() =
-            givenAnyCredential().also { tested.register(it) }
+    private fun givenAnyRegisteredCredential(pwd: String = "pwd") =
+            givenAnyCredential(pwd).also { tested.register(it) }
 
     private fun toLoginCredential(credential: Credential) =
             LoginCredential(credential.email, "", credential.password)
