@@ -4,12 +4,14 @@ import com.fdt.authservice.domain.entity.Credential
 import com.fdt.authservice.domain.entity.LoginCredential
 import com.fdt.authservice.domain.entity.Token
 import com.fdt.authservice.domain.exception.*
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
         private val credentialService: CredentialService,
-        private val tokenService: TokenService
+        private val tokenService: TokenService,
+        private val passwordEncoder: PasswordEncoder
 ) {
 
     //TODO este metodo debería tener transactionl
@@ -23,7 +25,7 @@ class AuthService(
         validLoginCredential(loginCredential)
         val credential = credentialService.findByEmailOrPhone(loginCredential.email, loginCredential.phone)
         credential?.let {
-            return if (it.checkPassword(loginCredential.password)) tokenService.create(it.userId)
+            return if (checkPassword(loginCredential.password, it.password)) tokenService.create(it.userId)
             else throw InvalidPassword("Invalid Password for User")
         } ?: throw InvalidUser("User not exist")
     }
@@ -44,6 +46,8 @@ class AuthService(
         if (loginCredential.phone.isNullOrEmpty() && loginCredential.email.isNullOrEmpty()){
             throw InvalidLoginCredential("Mail and Phone shouldn't be empty at the same time")
         }
-
     }
+
+    private fun checkPassword(rawPassword: String, encodedPassword: String) =
+            passwordEncoder.matches(rawPassword, encodedPassword)
 }
