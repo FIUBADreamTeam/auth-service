@@ -3,9 +3,7 @@ package com.fdt.authservice.domain.service
 import com.fdt.authservice.domain.entity.Credential
 import com.fdt.authservice.domain.entity.LoginCredential
 import com.fdt.authservice.domain.entity.Token
-import com.fdt.authservice.domain.exception.InvalidLoginCredential
-import com.fdt.authservice.domain.exception.InvalidPassword
-import com.fdt.authservice.domain.exception.InvalidUser
+import com.fdt.authservice.domain.exception.*
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,15 +14,17 @@ class AuthService(
 
     //TODO este metodo debería tener transactionl
     fun register(credential: Credential): Token {
-        // en vez de create no deberia ser CREATE_IF_NOT_FOUND ya que Mail o phone no deben estar registrados
         validRegistrationCredential(credential)
         val credentialSaved = credentialService.create(credential)
         return tokenService.create(credentialSaved.userId)
     }
 
     fun validRegistrationCredential(credential: Credential) {
-        if (credentialService.existsUser(credential)){
-            throw InvalidUser("Mail or Phone already taken")
+        if (credentialService.existsCredential(credential)){
+            throw AlreadyTakenMailOrPhone("Mail or Phone already taken")
+        }
+        if (credential.password.isNullOrEmpty()){
+            throw EmptyPassword("Password must not be empty")
         }
     }
 
