@@ -19,15 +19,6 @@ class AuthService(
         return tokenService.create(credentialSaved.userId)
     }
 
-    fun validRegistrationCredential(credential: Credential) {
-        if (credentialService.existsCredential(credential)){
-            throw AlreadyTakenMailOrPhone("Mail or Phone already taken")
-        }
-        if (credential.password.isNullOrEmpty()){
-            throw EmptyPassword("Password must not be empty")
-        }
-    }
-
     fun login(loginCredential: LoginCredential): Token {
         validLoginCredential(loginCredential)
         val credential = credentialService.findByEmailOrPhone(loginCredential.email, loginCredential.phone)
@@ -37,7 +28,16 @@ class AuthService(
         } ?: throw InvalidUser("User not exist")
     }
 
-    fun validLoginCredential(loginCredential: LoginCredential) {
+    private fun validRegistrationCredential(credential: Credential) {
+        if (credentialService.exists(credential)){
+            throw AlreadyTakenMailOrPhone("Mail or Phone already taken")
+        }
+        if (credential.password.isNullOrEmpty()){
+            throw EmptyPassword("Password must not be empty")
+        }
+    }
+
+     private fun validLoginCredential(loginCredential: LoginCredential) {
         if (!loginCredential.phone.isNullOrEmpty() && !loginCredential.email.isNullOrEmpty()){
             throw InvalidLoginCredential("Mail and Phone shouldn't be filled at the same time")
         }

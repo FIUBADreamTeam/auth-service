@@ -164,7 +164,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to register user with mail already taken should return error`() {
+    fun `when try to register with a mail already taken should return error`() {
         mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -177,7 +177,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to register user with phone already taken should return error`() {
+    fun `when try to register with a phone already taken should return error`() {
         mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "user_id":1, "email":"football@bar.com", "phone":"456", "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -190,7 +190,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to register user without pswd should retorn error`() {
+    fun `when try to register without pswd should return error`() {
         mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "user_id":2, "email":"foo@bar.com", "phone":"456" }""")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -199,7 +199,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to do a invalid login (not pswd) with unregistered user should return error`() {
+    fun `when try to login without pswd should return error`() {
         mockMvc.perform(post("/${AuthController.path}/login")
                 .content("""{ "email":"", "phone":"" }""")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -208,7 +208,7 @@ class AuthControllerTest {
     }
 
     @Test
-    fun `when i try to register user with empty pswd should return error`() {
+    fun `when try to register with empty pswd should return error`() {
         mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "user_id":2, "email":"foo@bar.com", "phone":"123", "password":"" }""")
                 .contentType(MediaType.APPLICATION_JSON))
