@@ -1,6 +1,5 @@
 package com.fdt.authservice.domain.entity
 
-import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
@@ -16,6 +15,6 @@ data class Credential(
         val email: String,
         val phone: String,
         var password: String
-){
-        fun checkPassword(pwd:String) = this.password==pwd
+) {
+        fun checkPassword(pwd: String) = this.password == pwd
 }
