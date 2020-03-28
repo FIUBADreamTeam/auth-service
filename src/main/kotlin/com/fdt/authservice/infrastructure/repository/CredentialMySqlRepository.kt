@@ -15,4 +15,16 @@ class CredentialMySqlRepository : CredentialRepository {
         return relationalCredentialRepository.save(credential)
     }
 
+    override fun deleteAll() {
+        relationalCredentialRepository.deleteAll()
+    }
+
+    override fun findByEmailOrPhone(email:String, phone:String): Credential?{
+        return relationalCredentialRepository.findByEmailOrPhone(email, phone)
+    }
+
+    override fun existsByEmailOrPhone(email:String, phone:String): Boolean{
+        return relationalCredentialRepository.existsByEmailOrPhone(email, phone)
+    }
+
 }

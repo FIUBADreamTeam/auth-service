@@ -10,4 +10,12 @@ class CredentialService(private var credentialRepository: CredentialRepository) 
     fun create(credential: Credential): Credential {
         return credentialRepository.save(credential)
     }
+
+    fun findByEmailOrPhone(email:String, phone:String): Credential? {
+        return credentialRepository.findByEmailOrPhone(email, phone)
+    }
+
+    fun exists(credential: Credential): Boolean{
+        return credentialRepository.existsByEmailOrPhone(credential.email, credential.phone)
+    }
 }

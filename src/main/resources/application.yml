@@ -1,4 +1,5 @@
-
+server:
+  port: 8081
 spring:
   application:
     name: auth-service
@@ -12,7 +13,7 @@ spring:
   cache:
     type: redis
   datasource:
-    url: jdbc:mysql://authdb:3306/authdb?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://localhost:3307/authdb?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=false
     username: user
     password: admin
   jpa:
