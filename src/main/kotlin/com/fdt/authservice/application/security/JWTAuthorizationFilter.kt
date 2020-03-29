@@ -41,7 +41,7 @@ class JWTAuthorizationFilter : OncePerRequestFilter() {
 
     private fun validateToken(request: HttpServletRequest): Claims {
         val jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "")
-        return Jwts.parserBuilder().setSigningKey(TokenService.key).build().parseClaimsJws(jwtToken).body
+        return Jwts.parserBuilder().setSigningKey(TokenService.keyPair.public).build().parseClaimsJws(jwtToken).body
     }
 
     private fun existsJWTToken(request: HttpServletRequest, res: HttpServletResponse): Boolean {

@@ -8,12 +8,13 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Service
 import java.security.Key
+import java.security.KeyPair
 
 @Service
 class TokenService(private val tokenRepository: TokenRepository) {
 
     companion object {
-        val key: Key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
+        val keyPair: KeyPair = Keys.keyPairFor(SignatureAlgorithm.RS256)
     }
 
     fun create(userId: Long): Token {
@@ -26,6 +27,6 @@ class TokenService(private val tokenRepository: TokenRepository) {
         return Jwts
                 .builder()
                 .setSubject(username)
-                .signWith(key).compact()
+                .signWith(keyPair.private).compact()
     }
 }
