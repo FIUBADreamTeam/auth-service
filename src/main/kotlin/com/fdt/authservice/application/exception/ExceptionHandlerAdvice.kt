@@ -21,8 +21,8 @@ class ExceptionHandlerAdvice {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("""{"message":"${ex.message}"}""")
     }
     @ExceptionHandler(UnavailableUserId::class)
-    fun handleAlreadyTakenMailOrPhone(ex: UnavailableUserId): ResponseEntity<Any> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("""{"message":"${ex.message}"}""")
+    fun handleUnavailableUserId(ex: UnavailableUserId): ResponseEntity<Any> {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("""{"message":"${ex.message}"}""")
     }
     @ExceptionHandler(EmptyPassword::class)
     fun handleEmptyPassword(ex: EmptyPassword): ResponseEntity<Any> {
@@ -35,6 +35,6 @@ class ExceptionHandlerAdvice {
     /*@ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleHttpMessageNotReadableException(exception: HttpMessageNotReadableException) =
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing parameter in request")
-                    // TODO Exception hanfling research*/
+                    // TODO Exception handling research*/
 
 }

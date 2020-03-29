@@ -54,7 +54,7 @@ class AuthControllerTest {
         mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "user_id":1, "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
+                .andExpect(status().isUnauthorized)
                 .andExpect(jsonPath("message").value("UserId already in use"))
     }
 
