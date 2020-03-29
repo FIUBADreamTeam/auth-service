@@ -16,11 +16,11 @@ class CredentialService(
         return credentialRepository.save(credential)
     }
 
-    fun findByEmailOrPhone(email:String, phone:String): Credential? {
-        return credentialRepository.findByEmailOrPhone(email, phone)
+    fun exists(credential: Credential): Boolean{
+        return credentialRepository.existsByUserId(credential.userId)
     }
 
-    fun exists(credential: Credential): Boolean{
-        return credentialRepository.existsByEmailOrPhone(credential.email, credential.phone)
+    fun findByUserId(userId: Long) : Credential ? {
+        return credentialRepository.findByUserId(userId)
     }
 }

@@ -1,7 +1,6 @@
 package com.fdt.authservice.domain.service
 
 import com.fdt.authservice.domain.entity.Credential
-import com.fdt.authservice.domain.entity.LoginCredential
 import com.fdt.authservice.domain.entity.Token
 import com.fdt.authservice.domain.exception.*
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -14,37 +13,33 @@ class AuthService(
         private val passwordEncoder: PasswordEncoder
 ) {
 
-    //TODO este metodo debería tener transactionl
-    fun register(credential: Credential): Token {
-        validRegistrationCredential(credential)
+    //TODO: method should be atomic?
+    fun saveAuthenticationInfo(credential: Credential): Token {
+        validAuthenticationInfo(credential)
         val credentialSaved = credentialService.create(credential)
         return tokenService.create(credentialSaved.userId)
     }
 
-    fun login(loginCredential: LoginCredential): Token {
-        validLoginCredential(loginCredential)
-        val credential = credentialService.findByEmailOrPhone(loginCredential.email, loginCredential.phone)
+    fun login(loginCredential: Credential): Token {
+        checkFieldsFilling(loginCredential)
+        val credential = credentialService.findByUserId(loginCredential.userId)
         credential?.let {
             return if (checkPassword(loginCredential.password, it.password)) tokenService.create(it.userId)
-            else throw InvalidPassword("Invalid Password for User")
+            else throw InvalidPassword("Invalid password for User")
         } ?: throw InvalidUser("User not exist")
     }
 
-    private fun validRegistrationCredential(credential: Credential) {
+    private fun validAuthenticationInfo(credential: Credential) {
+        checkFieldsFilling(credential)
         if (credentialService.exists(credential)){
-            throw AlreadyTakenMailOrPhone("Mail or Phone already taken")
-        }
-        if (credential.password.isNullOrEmpty()){
-            throw EmptyPassword("Password must not be empty")
+            throw UnavailableUserId("UserId already in use")
         }
     }
 
-     private fun validLoginCredential(loginCredential: LoginCredential) {
-        if (!loginCredential.phone.isNullOrEmpty() && !loginCredential.email.isNullOrEmpty()){
-            throw InvalidLoginCredential("Mail and Phone shouldn't be filled at the same time")
-        }
-        if (loginCredential.phone.isNullOrEmpty() && loginCredential.email.isNullOrEmpty()){
-            throw InvalidLoginCredential("Mail and Phone shouldn't be empty at the same time")
+    private fun checkFieldsFilling(credential: Credential){
+        // TODO Error Jackson convert to 0 when field is not declared
+        if (credential.password.isEmpty()){
+            throw EmptyPassword("Password must not be empty")
         }
     }
 
