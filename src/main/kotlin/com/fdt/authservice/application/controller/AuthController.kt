@@ -1,7 +1,6 @@
 package com.fdt.authservice.application.controller
 
 import com.fdt.authservice.domain.entity.Credential
-import com.fdt.authservice.domain.entity.LoginCredential
 import com.fdt.authservice.domain.entity.Token
 import com.fdt.authservice.domain.service.AuthService
 
@@ -21,15 +20,15 @@ class AuthController(private val authService: AuthService) {
 
     @PostMapping(path = ["/register"])
     fun register(@RequestBody credential: Credential): ResponseEntity<Token> {
-        val token = authService.register(credential)
+        val token = authService.saveAuthenticationInfo(credential)
         return ResponseEntity
                 .status(CREATED)
                 .body(token)
     }
 
     @PostMapping(path = ["/login"])
-    fun login(@RequestBody loginCredential: LoginCredential): Token {
-        return authService.login(loginCredential)
+    fun login(@RequestBody credential: Credential): Token {
+        return authService.login(credential)
     }
 
     @GetMapping("/ping")

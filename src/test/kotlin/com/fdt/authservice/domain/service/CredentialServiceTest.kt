@@ -9,7 +9,6 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
-import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -30,7 +29,8 @@ class CredentialServiceTest {
 
     @Test
     fun `can create credentials`() {
-        val credential = givenAnyCredential()
+        val rawPassword = "pwd"
+        val credential = givenAnyCredential(rawPassword)
 
         val saved = tested.create(credential)
 
