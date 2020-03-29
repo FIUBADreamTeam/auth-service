@@ -35,77 +35,9 @@ class AuthServiceTest {
 
     @Test
     fun `a successful registration should return a valid token`() {
-        val credential = givenAnyCredential()
-
-        val token = tested.register(credential)
-
-        assertEquals(
-                credential.userId.toString(),
-                getJwtSubject(token)
-        )
-    }
-
-    @Test
-    fun `when try to login with email and phone at the same time should throw and exception`() {
-        val loginCredential = LoginCredential("foo@bar.com", "123", "pwd")
-
-        assertFailsWith<InvalidLoginCredential> {
-            tested.login(loginCredential)
-        }
-    }
-
-    @Test
-    fun `when try to login without email and phone should throw and exception`() {
-        val loginCredential = LoginCredential("foo@bar.com", "123", "pwd")
-
-        assertFailsWith<InvalidLoginCredential> {
-            tested.login(loginCredential)
-        }
-    }
-
-    @Test
-    fun `when try to login with a phone that is not registered should throw and exception`() {
-        val loginCredential = LoginCredential("foo@bar.com", "", "pwd")
-
-        assertFailsWith<InvalidUser> {
-            tested.login(loginCredential)
-        }
-    }
-
-    @Test
-    fun `when try to login with a password that not match should throw and exception`() {
-        val credential = givenAnyRegisteredCredential()
-        val loginCredential = toLoginCredential(credential).copy(password = "invalid_pwd")
-
-        assertFailsWith<InvalidPassword> {
-            tested.login(loginCredential)
-        }
     }
 
     @Test
     fun `a successful login should return a valid token`() {
-        val pwd = "pwd"
-        val credential = givenAnyRegisteredCredential(pwd)
-        val loginCredential = toLoginCredential(credential.copy(password = pwd))
-
-        val token = tested.login(loginCredential)
-
-        assertEquals(
-                credential.userId.toString(),
-                getJwtSubject(token)
-        )
     }
-
-
-    private fun givenAnyCredential(pwd: String = "pwd") =
-            Credential(0L, 1L, "foo@bar.com", "123", pwd)
-
-    private fun givenAnyRegisteredCredential(pwd: String = "pwd") =
-            givenAnyCredential(pwd).also { tested.register(it) }
-
-    private fun toLoginCredential(credential: Credential) =
-            LoginCredential(credential.email, "", credential.password)
-
-    private fun getJwtSubject(token: Token) =
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token.token).body.subject
 }

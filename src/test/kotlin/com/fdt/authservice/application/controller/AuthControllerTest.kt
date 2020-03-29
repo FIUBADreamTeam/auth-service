@@ -35,11 +35,118 @@ class AuthControllerTest {
     @Test
     fun `when register a user should return created and a token`() {
         mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
+                .content("""{ "user_id":1, "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("token").exists())
                 .andExpect(jsonPath("user_id").value(1))
+    }
+
+    @Test
+    fun `when try to register without user id should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("field 'userId' is required"))
+    }
+
+    @Test
+    fun `when try to register with empty user id should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":, "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("userId must not be empty"))
+    }
+
+    @Test
+    fun `when try to register without pwd should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":1 }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("field 'password' is required"))
+    }
+
+    @Test
+    fun `when try to register with empty pwd should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":1, "password":"" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("Password must not be empty"))
+    }
+
+    @Test
+    fun `when try to login with registered user should return a token`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":1, "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "user_id":1, "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("token").exists())
+    }
+
+    @Test
+    fun `when try to login with a password that not match should return unauthorized`() {
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":1, "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "user_id":1, "password":"no mi pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized)
+                .andExpect(jsonPath("message").value("Invalid password for user"))
+    }
+
+    @Test
+    fun `when try to login with empty pwd should return unauthorized`() {
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "user_id":"", "pwd":"" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("field 'password' is required"))
+    }
+
+    @Test
+    fun `when try to login with an unregistered user should return unauthorized`() {
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "userId":"1", "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized)
+                .andExpect(jsonPath("message").value("User not exist"))
+    }
+
+    @Test
+    fun `when try to login with empty user id should return unauthorized`() {
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "userId":"", "password":"pwd" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized)
+                .andExpect(jsonPath("message").value("User not exist"))
+    }
+
+    @Test
+    fun `when try to login without pwd should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "user_id":"" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("field 'password' is required"))
+    }
+
+    @Test
+    fun `when try to login without user id should return error`() {
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "pwd":"" }""")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message").value("field 'userId' is required"))
     }
 
     @Test
@@ -95,126 +202,5 @@ class AuthControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer $token"))
                 .andExpect(status().isForbidden)
     }
-
-    @Test
-    fun `when try to login with registered user should return a token`() {
-        mockMvc.perform(post("/${AuthController.path}/register")
-                        .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
-                        .contentType(MediaType.APPLICATION_JSON))
-
-        mockMvc.perform(post("/${AuthController.path}/login")
-                .content("""{ "email":"foo@bar.com", "phone":"","password":"pwd" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("token").exists())
-                .andExpect(jsonPath("user_id").value(1))
-    }
-
-    @Test
-    fun `when try to login with a password that not match should return unauthorized`() {
-        mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-
-        mockMvc.perform(post("/${AuthController.path}/login")
-                        .content("""{ "email":"foo@bar.com", "phone":"","password":"no mi pwd" }""")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized)
-                .andExpect(jsonPath("message").value("Invalid Password for User"))
-    }
-
-    @Test
-    fun `when try to login with an unregistered user should return unauthorized`() {
-        mockMvc.perform(post("/${AuthController.path}/login")
-                        .content("""{ "email":"foo@bar.com", "phone":"","password":"pwd" }""")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized)
-                .andExpect(jsonPath("message").value("User not exist"))
-    }
-
-    @Test
-    fun `when try to login with email and phone at the same time should return bad request`() {
-        mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-
-        mockMvc.perform(post("/${AuthController.path}/login")
-                        .content("""{ "email":"foo@bar.com", "phone":"123","password":"pwd" }""")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("Mail and Phone shouldn't be filled at the same time"))
-    }
-
-    @Test
-    fun `when try to login with email and phone not registered at the same time should return bad request`() {
-        mockMvc.perform(post("/${AuthController.path}/login")
-                        .content("""{ "email":"foo@bar.com", "phone":"123","password":"pwd" }""")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("Mail and Phone shouldn't be filled at the same time"))
-    }
-
-    @Test
-    fun `when try to login without email and phone should return bad request`() {
-        mockMvc.perform(post("/${AuthController.path}/login")
-                .content("""{ "email":"", "phone":"","password":"pwd" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("Mail and Phone shouldn't be empty at the same time"))
-    }
-
-    @Test
-    fun `when try to register with a mail already taken should return error`() {
-        mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-
-        mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":2, "email":"foo@bar.com", "phone":"456", "password":"pswdr" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("Mail or Phone already taken"))
-    }
-
-    @Test
-    fun `when try to register with a phone already taken should return error`() {
-        mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":1, "email":"football@bar.com", "phone":"456", "password":"pwd" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-
-        mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":2, "email":"foo@bar.com", "phone":"456", "password":"pswdr" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("Mail or Phone already taken"))
-    }
-
-    @Test
-    fun `when try to register without pswd should return error`() {
-        mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":2, "email":"foo@bar.com", "phone":"456" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("field 'password' is required"))
-    }
-
-    @Test
-    fun `when try to login without pswd should return error`() {
-        mockMvc.perform(post("/${AuthController.path}/login")
-                .content("""{ "email":"", "phone":"" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("field 'password' is required"))
-    }
-
-    @Test
-    fun `when try to register with empty pswd should return error`() {
-        mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":2, "email":"foo@bar.com", "phone":"123", "password":"" }""")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("Password must not be empty"))
-    }
-
 
 }

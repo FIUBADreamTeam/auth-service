@@ -9,6 +9,10 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -31,11 +35,21 @@ class CredentialServiceTest {
         val saved = tested.create(credential)
 
         assertEquals(credential.userId, saved.userId)
-        assertEquals(credential.email, saved.email)
-        assertEquals(credential.phone, saved.phone)
-        assertEquals(credential.password, saved.password)
+        assertNotNull(saved.password)
+        assertTrue(saved.password.isNotEmpty())
     }
 
-    private fun givenAnyCredential() =
-            Credential(0L, 1L, "foo@bar.com", "123", "pwd")
+    @Test
+    fun `when create credentials the password is saved encoded`() {
+        val rawPassword = "pwd"
+        val credential = givenAnyCredential(rawPassword)
+
+        val saved = tested.create(credential)
+
+        assertNotEquals(rawPassword, saved.password)
+    }
+
+
+    private fun givenAnyCredential(password: String = "pwd") =
+            Credential(0L, 1L, password)
 }
