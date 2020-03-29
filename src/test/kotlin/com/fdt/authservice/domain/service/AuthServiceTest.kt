@@ -7,7 +7,7 @@ import com.fdt.authservice.domain.exception.InvalidLoginCredential
 import com.fdt.authservice.domain.exception.InvalidPassword
 import com.fdt.authservice.domain.exception.InvalidUser
 import com.fdt.authservice.domain.repository.CredentialRepository
-import com.fdt.authservice.domain.service.TokenService.Companion.key
+import com.fdt.authservice.domain.service.TokenService.Companion.keyPair
 import io.jsonwebtoken.Jwts
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -107,5 +107,5 @@ class AuthServiceTest {
             LoginCredential(credential.email, "", credential.password)
 
     private fun getJwtSubject(token: Token) =
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token.token).body.subject
+            Jwts.parserBuilder().setSigningKey(keyPair.public).build().parseClaimsJws(token.token).body.subject
 }
