@@ -10,9 +10,7 @@ import javax.persistence.Table
 @Table(name = "credential")
 data class Credential(
         @Id @GeneratedValue(strategy = IDENTITY)
-        val id: Long,
+        val id: Long = 0,
         val userId: Long,
-        val email: String,
-        val phone: String,
         var password: String
 )
