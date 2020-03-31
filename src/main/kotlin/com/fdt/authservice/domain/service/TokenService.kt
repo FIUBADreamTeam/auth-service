@@ -2,31 +2,43 @@ package com.fdt.authservice.domain.service
 
 import com.fdt.authservice.domain.entity.Token
 import com.fdt.authservice.domain.repository.TokenRepository
-
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Service
-import java.security.Key
 import java.security.KeyPair
+import java.time.Clock
+import java.util.*
 
 @Service
-class TokenService(private val tokenRepository: TokenRepository) {
+class TokenService(
+        private val tokenRepository: TokenRepository,
+        private val clock: Clock
+) {
 
     companion object {
-        val keyPair: KeyPair = Keys.keyPairFor(SignatureAlgorithm.RS256)
+        private val keyPair: KeyPair = Keys.keyPairFor(SignatureAlgorithm.RS256)
+        private const val ttlTokenMillis = 15 * 60 * 1000
     }
 
     fun create(userId: Long): Token {
-        //TODO ver como generar el hash del token
         val token = Token(token = getJWTToken(userId.toString()), userId = userId)
         return tokenRepository.save(token)
     }
+
+    fun getSubject(token: String): String =
+            Jwts.parserBuilder()
+                    .setSigningKey(keyPair.public)
+                    .build()
+                    .parseClaimsJws(token)
+                    .body
+                    .subject
 
     private fun getJWTToken(username: String): String {
         return Jwts
                 .builder()
                 .setSubject(username)
+                .setExpiration(Date(clock.millis() + ttlTokenMillis))
                 .signWith(keyPair.private).compact()
     }
 }

@@ -5,13 +5,15 @@ import io.jsonwebtoken.*
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
-class JWTAuthorizationFilter : OncePerRequestFilter() {
+@Component
+class JWTAuthorizationFilter(private val tokenService: TokenService) : OncePerRequestFilter() {
 
     companion object {
         private const val PREFIX = "Bearer "
@@ -39,9 +41,9 @@ class JWTAuthorizationFilter : OncePerRequestFilter() {
         }
     }
 
-    private fun validateToken(request: HttpServletRequest): Claims {
+    private fun validateToken(request: HttpServletRequest): String {
         val jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION).replace(PREFIX, "")
-        return Jwts.parserBuilder().setSigningKey(TokenService.keyPair.public).build().parseClaimsJws(jwtToken).body
+        return tokenService.getSubject(jwtToken)
     }
 
     private fun existsJWTToken(request: HttpServletRequest, res: HttpServletResponse): Boolean {
@@ -49,8 +51,8 @@ class JWTAuthorizationFilter : OncePerRequestFilter() {
         return !(authenticationHeader == null || !authenticationHeader.startsWith(PREFIX))
     }
 
-    private fun setUpSpringAuthentication(claims: Claims) {
-        val auth = UsernamePasswordAuthenticationToken(claims.subject, null, listOf())
+    private fun setUpSpringAuthentication(subject: String) {
+        val auth = UsernamePasswordAuthenticationToken(subject, null, listOf())
         SecurityContextHolder.getContext().authentication = auth
     }
 

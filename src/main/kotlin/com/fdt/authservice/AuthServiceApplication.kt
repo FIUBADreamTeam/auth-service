@@ -22,11 +22,11 @@ fun main(args: Array<String>) {
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-internal class WebSecurityConfig : WebSecurityConfigurerAdapter() {
+internal class WebSecurityConfig(private val filter: JWTAuthorizationFilter) : WebSecurityConfigurerAdapter() {
 	@Throws(Exception::class)
 	override fun configure(http: HttpSecurity) {
 		http.csrf().disable()
-				.addFilterAfter(JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+				.addFilterAfter(filter, UsernamePasswordAuthenticationFilter::class.java)
 				.authorizeRequests()
 				.antMatchers(HttpMethod.POST, "/auth/register").permitAll()
 				.antMatchers(HttpMethod.POST, "/auth/login").permitAll()
