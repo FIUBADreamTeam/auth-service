@@ -18,12 +18,11 @@ class TokenService(
 
     companion object {
         private val keyPair: KeyPair = Keys.keyPairFor(SignatureAlgorithm.RS256)
-        private const val ttlTokenMillis = 15 * 60 * 1000
+        const val ttlTokenMillis = 15 * 60 * 1000
     }
 
     fun create(userId: Long): Token {
-        val token = Token(token = getJWTToken(userId.toString()), userId = userId)
-        return tokenRepository.save(token)
+        return Token(token = getJWTToken(userId.toString()), userId = userId)
     }
 
     fun getSubject(token: String): String =
