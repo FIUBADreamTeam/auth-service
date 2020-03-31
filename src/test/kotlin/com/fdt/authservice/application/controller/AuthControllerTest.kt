@@ -194,6 +194,10 @@ class AuthControllerTest {
     }
 
     @Test
+    fun `when try to access a secure endpoint with an expired token return forbidden`() {
+    }
+
+    @Test
     fun `me`() {
         val body = mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "user_id":1, "email":"foo@bar.com", "phone":"123", "password":"pwd" }""")
