@@ -54,27 +54,26 @@ class AuthControllerTest {
         mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "user_id":1, "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized)
-                .andExpect(jsonPath("message").value("UserId already in use"))
+                .andExpect(status().isConflict)
+                .andExpect(jsonPath("message").value("UserId already exists"))
     }
-
 
     @Test
     fun `when try to register without user id should return error`() {
-        /*mockMvc.perform(post("/${AuthController.path}/register")
+        mockMvc.perform(post("/${AuthController.path}/register")
                 .content("""{ "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("field 'userId' is required"))*/
+                .andExpect(jsonPath("message").value("UserId must not be null"))
     }
 
     @Test
     fun `when try to register with empty user id should return error`() {
-        /*mockMvc.perform(post("/${AuthController.path}/register")
-                .content("""{ "user_id":, "password":"pwd" }""")
+        mockMvc.perform(post("/${AuthController.path}/register")
+                .content("""{ "user_id":"", "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("userId must not be empty"))*/
+                .andExpect(jsonPath("message").value("UserId must not be null"))
     }
 
     @Test
@@ -83,7 +82,7 @@ class AuthControllerTest {
                 .content("""{ "user_id":1 }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("field 'password' is required"))
+                .andExpect(jsonPath("message").value("Password must not be null or empty"))
     }
 
     @Test
@@ -92,7 +91,7 @@ class AuthControllerTest {
                 .content("""{ "user_id":1, "password":"" }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("Password must not be empty"))
+                .andExpect(jsonPath("message").value("Password must not be null or empty"))
     }
 
     @Test
@@ -118,16 +117,16 @@ class AuthControllerTest {
                 .content("""{ "user_id":1, "password":"no mi pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized)
-                .andExpect(jsonPath("message").value("Invalid password for User"))
+                .andExpect(jsonPath("message").value("Invalid password"))
     }
 
     @Test
-    fun `when try to login with empty pwd should return unauthorized`() {
+    fun `when try to login with empty pwd should return error`() {
         mockMvc.perform(post("/${AuthController.path}/login")
-                .content("""{ "user_id":1, "pwd":"" }""")
+                .content("""{ "user_id":1, "password":"" }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("field 'password' is required"))
+                .andExpect(jsonPath("message").value("Password must not be null or empty"))
     }
 
     @Test
@@ -141,11 +140,11 @@ class AuthControllerTest {
 
     @Test
     fun `when try to login with empty user id should return error`() {
-        /*mockMvc.perform(post("/${AuthController.path}/login")
+        mockMvc.perform(post("/${AuthController.path}/login")
                 .content("""{ "user_id":"", "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest)
-                .andExpect(content().string("Missing parameter in request"))*/
+                .andExpect(jsonPath("message").value("UserId must not be null"))
     }
 
     @Test
@@ -154,16 +153,16 @@ class AuthControllerTest {
                 .content("""{ "user_id":1 }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("field 'password' is required"))
+                .andExpect(jsonPath("message").value("Password must not be null or empty"))
     }
 
     @Test
     fun `when try to login without user id should return error`() {
-        /*mockMvc.perform(post("/${AuthController.path}/login")
-                .content("""{ "pwd":"" }""")
+        mockMvc.perform(post("/${AuthController.path}/login")
+                .content("""{ "password":"pwd" }""")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("message").value("field 'userId' is required"))*/
+                .andExpect(jsonPath("message").value("UserId must not be null"))
     }
 
     @Test

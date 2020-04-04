@@ -16,11 +16,11 @@ class CredentialService(
         return credentialRepository.save(credential)
     }
 
-    fun exists(credential: Credential): Boolean{
+    fun existsUserId(credential: Credential): Boolean{
         return credentialRepository.existsByUserId(credential.userId)
     }
 
-    fun findByUserId(userId: Long) : Credential ? {
+    fun findByUserId(userId: Long) : Credential? {
         return credentialRepository.findByUserId(userId)
     }
 }

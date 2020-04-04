@@ -1,5 +1,7 @@
 package com.fdt.authservice.application.controller
 
+import com.fdt.authservice.application.dto.CredentialDto
+import com.fdt.authservice.application.dto.CredentialFactory
 import com.fdt.authservice.domain.entity.Credential
 import com.fdt.authservice.domain.entity.Token
 import com.fdt.authservice.domain.service.AuthService
@@ -12,23 +14,24 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(value = [AuthController.path])
-class AuthController(private val authService: AuthService) {
+class AuthController(
+        private val authService: AuthService,
+        private val userFactory: CredentialFactory
+) {
 
     companion object {
         const val path = "auth"
     }
 
     @PostMapping(path = ["/register"])
-    fun register(@RequestBody credential: Credential): ResponseEntity<Token> {
-        val token = authService.saveAuthenticationInfo(credential)
-        return ResponseEntity
-                .status(CREATED)
-                .body(token)
+    fun register(@RequestBody credentialDto: CredentialDto): ResponseEntity<Token> {
+        val token = authService.saveAuthInfo(userFactory.create(credentialDto))
+        return ResponseEntity.status(CREATED).body(token)
     }
 
     @PostMapping(path = ["/login"])
-    fun login(@RequestBody credential: Credential): Token {
-        return authService.login(credential)
+    fun login(@RequestBody credentialDto: CredentialDto): Token {
+        return authService.login(userFactory.create(credentialDto))
     }
 
     @GetMapping("/ping")
