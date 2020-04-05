@@ -1,40 +1,34 @@
 package com.fdt.authservice.application.exception
 
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
-import com.fdt.authservice.domain.exception.*
+import com.fdt.authservice.domain.exception.InvalidPassword
+import com.fdt.authservice.domain.exception.InvalidUser
+import com.fdt.authservice.domain.exception.UnavailableUserId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import java.lang.AssertionError
 
 
 @ControllerAdvice
 class ExceptionHandlerAdvice {
     @ExceptionHandler(InvalidPassword::class)
-    fun handleInvalidPassword(ex: InvalidPassword): ResponseEntity<Any> {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("""{"message":"${ex.message}"}""")
-    }
+    fun handleInvalidPassword(ex: InvalidPassword) =
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("""{"message":"${ex.message}"}""")
+
     @ExceptionHandler(InvalidUser::class)
-    fun handleInvalidPassword(ex: InvalidUser): ResponseEntity<Any> {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("""{"message":"${ex.message}"}""")
-    }
+    fun handleInvalidUser(ex: InvalidUser) =
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("""{"message":"${ex.message}"}""")
+
     @ExceptionHandler(UnavailableUserId::class)
-    fun handleUnavailableUserId(ex: UnavailableUserId): ResponseEntity<Any> {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("""{"message":"${ex.message}"}""")
-    }
-    @ExceptionHandler(EmptyPassword::class)
-    fun handleEmptyPassword(ex: EmptyPassword): ResponseEntity<Any> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("""{"message":"${ex.message}"}""")
-    }
-    @ExceptionHandler(MissingKotlinParameterException::class)
-    fun handleDefaultHandlerExceptionResolver(exception: MissingKotlinParameterException) =
-            ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("""{"message":"field '${exception.path[0].fieldName}' is required"}""")
-    /*@ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleHttpMessageNotReadableException(exception: HttpMessageNotReadableException) =
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing parameter in request")
-                    // TODO Exception handling research*/
+    fun handleUnavailableUserId(ex: UnavailableUserId) =
+            ResponseEntity.status(HttpStatus.CONFLICT).body("""{"message":"${ex.message}"}""")
+
+    @ExceptionHandler(NullOrEmptyPassword::class)
+    fun handleEmptyPassword(ex: NullOrEmptyPassword) =
+        ResponseEntity.status(HttpStatus.BAD_REQUEST).body("""{"message":"${ex.message}"}""")
+
+    @ExceptionHandler(NullUserId::class)
+    fun handleNullUserId(ex: NullUserId) =
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("""{"message":"${ex.message}"}""")
 
 }
